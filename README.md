@@ -1,34 +1,73 @@
-# babycase
+# React + TypeScript + Vite
 
-Un jeu de piste web interactif où la famille et les proches mènent l'enquête pour deviner le prénom du futur bébé à l'aide d'indices et d'une grille d'élimination.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
----
+Currently, two official plugins are available:
 
-## Comment ça marche ? (Le Déroulement du Jeu)
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-L'application transforme l'annonce du prénom en une enquête interactive séparée en deux rôles :
+## React Compiler
 
-### 1. Le Créateur (Les Parents)
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-- Il choisit et enregistre le vrai prénom du bébé, qui reste totalement secret dans la base de données.
-- L'application génère un lien d'invitation unique à envoyer aux proches par SMS ou messagerie.
-- Il prépare une liste d'indices (ex: "Le prénom fait entre 3 et 5 lettres", "Il commence par une voyelle") et peut programmer leur publication automatique au fil des semaines.
+## Expanding the ESLint configuration
 
-### 2. Les Chercheurs (La Famille et les Amis)
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- En cliquant sur le lien unique, ils accèdent à leur espace de jeu où ils découvrent les indices déjà débloqués et un compte à rebours avant le prochain indice.
-- Sous les indices s'affiche une grille contenant entre 300 et 500 prénoms.
-- **Le cœur du jeu :** Au fur et à mesure que les indices sont révélés, les chercheurs analysent la liste. D'un simple clic sur l'écran, ils "grisent" et barrent les prénoms qui ne correspondent pas aux critères.
-- À force d'éliminations, la grille se vide jusqu'à ce qu'il ne reste plus qu'un seul prénom : la bonne réponse.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-## Fonctionnalités clés (MVP)
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-- **Grille Mobile-First :** Interface optimisée spécifiquement pour que les proches puissent jouer confortablement sur leur smartphone.
-- **Élimination Tactile Intuitive :** Un clic pour barrer/griser un prénom, un second clic pour le réactiver en cas d'erreur de manipulation.
-- **Sauvegarde Automatique Locale :** L'état de la grille (les prénoms éliminés) est sauvegardé directement dans le navigateur du joueur (`localStorage`). S'il ferme l'onglet, il retrouve sa progression exacte plus tard.
-- **Gestionnaire du Suspense :** Affichage dynamique des indices débloqués et système de verrouillage visuel sur les indices futurs pour inciter les proches à revenir sur le site.
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-## Stack Technique
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-- **Backend :** Node.js
-- **Base de données & Authentification :** Supabase (PostgreSQL)
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
